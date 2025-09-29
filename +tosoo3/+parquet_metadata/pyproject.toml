@@ -1,0 +1,18 @@
+[project]
+name = "parquetmatlab"
+version = "0.1.0"
+description = "MATLAB Parquet user metadata reader/writer and tests"
+requires-python = ">=3.10"
+dependencies = [
+    "pyarrow>=21.0.0",
+    "taskipy>=1.14.1",
+]
+
+[tool.taskipy.tasks]
+gen = "python3 generate_test_files.py"
+test_read = "/Applications/MATLAB_R2025a.app/bin/matlab -batch \"test_read_all\""
+test_read_brotli = "/Applications/MATLAB_R2025a.app/bin/matlab -batch \"test_read_brotli_matlab\""
+test_write = "/Applications/MATLAB_R2025a.app/bin/matlab -batch \"test_write_roundtrip_matlab; test_write_roundtrip_brotli_matlab\""
+test_py = "python3 test_read_metadata.py test_files/matlab_roundtrip.parquet && python3 test_read_metadata.py test_files/matlab_roundtrip_brotli.parquet"
+test_all = "python3 generate_test_files.py && /Applications/MATLAB_R2025a.app/bin/matlab -batch \"run('$(pwd)/run_all_matlab_tests.m')\" && python3 test_read_metadata.py test_files/matlab_roundtrip.parquet && python3 test_read_metadata.py test_files/matlab_roundtrip_brotli.parquet"
+clean = "rm -f test_files/*.parquet"

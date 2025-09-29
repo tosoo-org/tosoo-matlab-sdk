@@ -1,0 +1,4 @@
+test_files/*.parquet
+.venv
+.claude
+.mypy_cache
