@@ -45,16 +45,15 @@ fprintf('EEG sampling rate: %d Hz\n', metadata.eeg_sampling_frequency_hz);
 ```
 
 ### read_data
-Read complete data with separate views for EEG and actigraphy.
+Read data with separate views for EEG and actigraphy.
 
 ```matlab
-[full_data, eeg_data, actigraphy_data] = tosoo6.read_data('recording.tosoo6.parquet');
+[eeg_data, actigraphy_data] = tosoo6.read_data('recording.tosoo6.parquet');
 ```
 
 **Input:**
 - `input_file` - Path to the parquet file
 
 **Output:**
-- `full_data` - Complete dataset as a MATLAB table
 - `eeg_data` - Table containing only EEG samples and relevant columns
 - `actigraphy_data` - Table containing only actigraphy samples and relevant columns

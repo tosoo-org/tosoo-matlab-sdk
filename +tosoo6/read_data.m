@@ -1,22 +1,21 @@
-function [full_data, eeg_data, actigraphy_data] = read_data(input_file)
-%READ_DATA Read data from parquet file and return full data, EEG data view, and actigraphy data view.
-%   [FULL_DATA, EEG_DATA, ACTIGRAPHY_DATA] = READ_DATA(INPUT_FILE)
-%   reads data from a Tosoo6 parquet file and returns three tables.
+function [eeg_data, actigraphy_data] = read_data(input_file)
+%READ_DATA Read data from parquet file and return EEG data and actigraphy data.
+%   [EEG_DATA, ACTIGRAPHY_DATA] = READ_DATA(INPUT_FILE)
+%   reads data from a Tosoo6 parquet file and returns two tables.
 %
 %   Input:
 %       input_file - Path to the parquet file (string or char array)
 %
 %   Output:
-%       full_data - Complete dataset with all samples (table)
 %       eeg_data - Rows where is_eeg_sample=true (table)
 %       actigraphy_data - Rows where is_actigraphy_sample=true (table)
 %
 %   Note: The views are separate tables in MATLAB (not references like in Python)
 %   If the columns "is_eeg_sample" and "is_actigraphy_sample" do not exist,
-%   all data is assumed to be EEG data (returned in both full_data and eeg_data).
+%   all data is assumed to be EEG data (returned in eeg_data).
 %
 %   Example:
-%       [full, eeg, acti] = tosoo6.read_data('recording.tosoo6.parquet');
+%       [eeg, acti] = tosoo6.read_data('recording.tosoo6.parquet');
 
     % Validate input
     if ~isfile(input_file)
