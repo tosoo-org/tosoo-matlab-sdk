@@ -32,7 +32,10 @@ function [eeg_data, actigraphy_data] = read_data(input_file)
     % If neither column exists, assume all data is EEG
     if ~has_eeg_col && ~has_acti_col
         eeg_data = full_data;
-        actigraphy_data = full_data(false(height(full_data), 1), :);
+        % Return empty actigraphy table with only relevant columns
+        acti_cols = {'ms_since_first_sample', 'acceleration_x', 'acceleration_y', 'acceleration_z'};
+        acti_cols = acti_cols(ismember(acti_cols, full_data.Properties.VariableNames));
+        actigraphy_data = full_data(false(height(full_data), 1), acti_cols);
         return;
     end
 
@@ -62,19 +65,8 @@ function [eeg_data, actigraphy_data] = read_data(input_file)
         warning('tosoo6:read_data:NoActigraphyColumn', 'Column "is_actigraphy_sample" not found in data');
     end
 
-    % Remove EEG-specific columns from actigraphy view
-    act_cols_to_remove = {'is_eeg_sample', 'is_actigraphy_sample', ...
-                          'volume_gains', 'on_off_windows', 'arousal_detection', ...
-                          'artifact_detection', 'min_inter_tone_time_satisfied', ...
-                          'sleep_onset_time_satisfied', 'phase_condition_satisfied', ...
-                          'slow_wave_detection', 'nrem_sleep_detection', ...
-                          'true_stimulations_starts', 'muted_stimulations_starts'};
-    % Also remove any columns starting with "eeg_"
-    all_cols = actigraphy_data.Properties.VariableNames;
-    eeg_prefix_cols = all_cols(startsWith(all_cols, 'eeg_'));
-    act_cols_to_remove = [act_cols_to_remove, eeg_prefix_cols];
-    act_cols_to_remove = act_cols_to_remove(ismember(act_cols_to_remove, actigraphy_data.Properties.VariableNames));
-    if ~isempty(act_cols_to_remove)
-        actigraphy_data(:, act_cols_to_remove) = [];
-    end
+    % Keep only relevant columns for actigraphy view
+    acti_cols_to_keep = {'ms_since_first_sample', 'acceleration_x', 'acceleration_y', 'acceleration_z'};
+    acti_cols_to_keep = acti_cols_to_keep(ismember(acti_cols_to_keep, actigraphy_data.Properties.VariableNames));
+    actigraphy_data = actigraphy_data(:, acti_cols_to_keep);
 end
