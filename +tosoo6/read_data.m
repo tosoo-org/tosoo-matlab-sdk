@@ -12,6 +12,8 @@ function [full_data, eeg_data, actigraphy_data] = read_data(input_file)
 %       actigraphy_data - Rows where is_actigraphy_sample=true (table)
 %
 %   Note: The views are separate tables in MATLAB (not references like in Python)
+%   If the columns "is_eeg_sample" and "is_actigraphy_sample" do not exist,
+%   all data is assumed to be EEG data (returned in both full_data and eeg_data).
 %
 %   Example:
 %       [full, eeg, acti] = tosoo6.read_data('recording.tosoo6.parquet');
@@ -24,8 +26,19 @@ function [full_data, eeg_data, actigraphy_data] = read_data(input_file)
     % Read the parquet file using MATLAB's built-in parquetread
     full_data = parquetread(input_file);
 
+    % Check if sample type columns exist
+    has_eeg_col = ismember('is_eeg_sample', full_data.Properties.VariableNames);
+    has_acti_col = ismember('is_actigraphy_sample', full_data.Properties.VariableNames);
+
+    % If neither column exists, assume all data is EEG
+    if ~has_eeg_col && ~has_acti_col
+        eeg_data = full_data;
+        actigraphy_data = full_data(false(height(full_data), 1), :);
+        return;
+    end
+
     % Create EEG data view - filter rows where is_eeg_sample is true
-    if ismember('is_eeg_sample', full_data.Properties.VariableNames)
+    if has_eeg_col
         eeg_data = full_data(full_data.is_eeg_sample, :);
     else
         % If column doesn't exist, return empty table with same structure
@@ -42,7 +55,7 @@ function [full_data, eeg_data, actigraphy_data] = read_data(input_file)
     end
 
     % Create actigraphy data view - filter rows where is_actigraphy_sample is true
-    if ismember('is_actigraphy_sample', full_data.Properties.VariableNames)
+    if has_acti_col
         actigraphy_data = full_data(full_data.is_actigraphy_sample, :);
     else
         % If column doesn't exist, return empty table with same structure
