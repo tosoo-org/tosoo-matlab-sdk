@@ -1,7 +1,7 @@
 function [full_data, eeg_data, actigraphy_data] = read_data(input_file)
 %READ_DATA Read data from parquet file and return full data, EEG data view, and actigraphy data view.
 %   [FULL_DATA, EEG_DATA, ACTIGRAPHY_DATA] = READ_DATA(INPUT_FILE)
-%   reads data from a Tosoo3 parquet file and returns three tables.
+%   reads data from a Tosoo6 parquet file and returns three tables.
 %
 %   Input:
 %       input_file - Path to the parquet file (string or char array)
@@ -14,11 +14,11 @@ function [full_data, eeg_data, actigraphy_data] = read_data(input_file)
 %   Note: The views are separate tables in MATLAB (not references like in Python)
 %
 %   Example:
-%       [full, eeg, acti] = tosoo3.read_data('recording.tosoo3.parquet');
+%       [full, eeg, acti] = tosoo6.read_data('recording.tosoo6.parquet');
 
     % Validate input
     if ~isfile(input_file)
-        error('tosoo3:read_data:FileNotFound', 'File not found: %s', input_file);
+        error('tosoo6:read_data:FileNotFound', 'File not found: %s', input_file);
     end
 
     % Read the parquet file using MATLAB's built-in parquetread
@@ -30,7 +30,7 @@ function [full_data, eeg_data, actigraphy_data] = read_data(input_file)
     else
         % If column doesn't exist, return empty table with same structure
         eeg_data = full_data(false(height(full_data), 1), :);
-        warning('tosoo3:read_data:NoEEGColumn', 'Column "is_eeg_sample" not found in data');
+        warning('tosoo6:read_data:NoEEGColumn', 'Column "is_eeg_sample" not found in data');
     end
 
     % Remove actigraphy-specific columns from EEG view
@@ -47,7 +47,7 @@ function [full_data, eeg_data, actigraphy_data] = read_data(input_file)
     else
         % If column doesn't exist, return empty table with same structure
         actigraphy_data = full_data(false(height(full_data), 1), :);
-        warning('tosoo3:read_data:NoActigraphyColumn', 'Column "is_actigraphy_sample" not found in data');
+        warning('tosoo6:read_data:NoActigraphyColumn', 'Column "is_actigraphy_sample" not found in data');
     end
 
     % Remove EEG-specific columns from actigraphy view

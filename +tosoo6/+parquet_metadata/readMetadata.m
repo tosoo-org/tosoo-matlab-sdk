@@ -104,7 +104,7 @@ function file_metadata = readFileMetadata(fid, footer_info)
     metadata_bytes = fread(fid, footer_info.metadata_length, 'uint8');
     
     % Parse Thrift Compact Protocol
-    parser = tosoo3.parquet_metadata.ThriftCompactParser(metadata_bytes);
+    parser = tosoo6.parquet_metadata.ThriftCompactParser(metadata_bytes);
     file_metadata = parser.readStruct();
 end
 

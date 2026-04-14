@@ -1,1 +1,0 @@
-+tosoo3 is a matlab package to help read .tosoo3.parquet files, similar to @shared_py/shared_py/tosoo3/__init__.py
